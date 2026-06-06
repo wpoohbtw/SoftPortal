@@ -1,0 +1,57 @@
+.target-cursor-wrapper {
+  height: 0;
+  left: 0;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: 0;
+  z-index: 9999;
+}
+
+.target-cursor-dot {
+  background: #ffffff;
+  border-radius: 50%;
+  height: 4px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  will-change: transform;
+}
+
+.target-cursor-corner {
+  border: 3px solid #ffffff;
+  height: 12px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  will-change: transform;
+}
+
+.corner-tl {
+  border-bottom: none;
+  border-right: none;
+  transform: translate(-150%, -150%);
+}
+
+.corner-tr {
+  border-bottom: none;
+  border-left: none;
+  transform: translate(50%, -150%);
+}
+
+.corner-br {
+  border-left: none;
+  border-top: none;
+  transform: translate(50%, 50%);
+}
+
+.corner-bl {
+  border-right: none;
+  border-top: none;
+  transform: translate(-150%, 50%);
+}

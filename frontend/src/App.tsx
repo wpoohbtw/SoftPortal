@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react'
 import './App.css'
+import TargetCursor from './TargetCursor'
 
 gsap.registerPlugin(useGSAP)
 
@@ -47,21 +48,21 @@ const fallbackProjects: Project[] = [
     key: 'pnl',
     name: 'ProfitsNLosses',
     path: '/pnl/',
-    description: 'Future protected route for finance tools',
+    description: 'Журнал и имитация крипто-сделок, PnL и таблица ситуаций.',
     is_active: true,
   },
   {
     key: 'vault',
-    name: 'Vault Console',
+    name: 'Заглушка 01',
     path: '/vault/',
-    description: 'Admin-only workspace placeholder',
+    description: 'Пустой слот под будущий проект.',
     is_active: true,
   },
   {
     key: 'metrics',
-    name: 'Metrics Lab',
+    name: 'Заглушка 02',
     path: '/metrics/',
-    description: 'Experiments and reports placeholder',
+    description: 'Пустой слот под будущий проект.',
     is_active: true,
   },
 ]
@@ -93,6 +94,20 @@ async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
 
 function getRoute(): Route {
   return window.location.pathname === '/admin' ? '/admin' : '/'
+}
+
+function getProjectCard(project: Project, index: number): Pick<Project, 'name' | 'description'> {
+  if (project.key === 'pnl') {
+    return {
+      name: 'ProfitsNLosses',
+      description: 'Журнал крипто-сделок без реальных денег: позиции, PnL и заметки по ситуациям.',
+    }
+  }
+
+  return {
+    name: `Заглушка ${String(index).padStart(2, '0')}`,
+    description: 'Пустой слот под будущий проект.',
+  }
 }
 
 function App() {
@@ -274,6 +289,7 @@ function PortalView({
   onLogoutRequest: () => void
 }) {
   const openProject = (project: Project) => {
+    if (project.key !== 'pnl') return
     window.location.href = project.path
   }
 
@@ -294,15 +310,26 @@ function PortalView({
       </div>
 
       <div className="portal-center">
+        <TargetCursor spinDuration={5} hideDefaultCursor parallaxOn hoverDuration={0.65} />
         <div className="project-grid">
-          {projects.slice(0, 3).map((project) => (
-            <button className="project-button motion-rise" key={project.key} onClick={() => openProject(project)} type="button">
-              <strong>{project.name}</strong>
-              <span className="project-arrow">
-                <ArrowRight size={18} />
-              </span>
-            </button>
-          ))}
+          {projects.slice(0, 3).map((project, index) => {
+            const card = getProjectCard(project, index + 1)
+            return (
+              <button
+                className={
+                  project.key === 'pnl'
+                    ? 'project-button cursor-target motion-rise'
+                    : 'project-button cursor-target is-placeholder motion-rise'
+                }
+                key={project.key}
+                onClick={() => openProject(project)}
+                type="button"
+              >
+                <strong>{card.name}</strong>
+                <p>{card.description}</p>
+              </button>
+            )
+          })}
         </div>
       </div>
     </section>
