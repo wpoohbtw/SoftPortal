@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, HTTPException, Request, status
 
@@ -10,6 +10,19 @@ from .security import hash_session_token
 
 def parse_utc(value: str) -> datetime:
     return datetime.fromisoformat(value)
+
+
+def touch_session_seen(connection: sqlite3.Connection, token_hash: str, last_seen_at: str) -> None:
+    try:
+        if parse_utc(last_seen_at) > datetime.now(timezone.utc) - timedelta(minutes=1):
+            return
+        connection.execute(
+            'UPDATE sessions SET last_seen_at = ? WHERE token_hash = ?',
+            (utc_now(), token_hash),
+        )
+    except sqlite3.OperationalError as error:
+        if 'locked' not in str(error).lower():
+            raise
 
 
 def get_db():
@@ -25,6 +38,7 @@ def get_current_user(
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not authenticated')
 
+    token_hash = hash_session_token(token)
     row = connection.execute(
         """
         SELECT
@@ -33,12 +47,13 @@ def get_current_user(
             users.display_name,
             users.is_admin,
             users.is_active,
-            sessions.expires_at
+            sessions.expires_at,
+            sessions.last_seen_at
         FROM sessions
         JOIN users ON users.id = sessions.user_id
         WHERE sessions.token_hash = ?
         """,
-        (hash_session_token(token),),
+        (token_hash,),
     ).fetchone()
 
     if not row or not row['is_active']:
@@ -47,10 +62,7 @@ def get_current_user(
     if parse_utc(row['expires_at']) <= datetime.now(timezone.utc):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Session expired')
 
-    connection.execute(
-        'UPDATE sessions SET last_seen_at = ? WHERE token_hash = ?',
-        (utc_now(), hash_session_token(token)),
-    )
+    touch_session_seen(connection, token_hash, row['last_seen_at'])
     return row
 
 

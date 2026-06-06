@@ -15,8 +15,10 @@ def utc_now() -> str:
 @contextmanager
 def get_connection() -> Iterator[sqlite3.Connection]:
     config.DATA_DIR.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(config.DB_PATH, check_same_thread=False)
+    connection = sqlite3.connect(config.DB_PATH, check_same_thread=False, timeout=30)
     connection.row_factory = sqlite3.Row
+    connection.execute('PRAGMA journal_mode = WAL')
+    connection.execute('PRAGMA busy_timeout = 30000')
     connection.execute('PRAGMA foreign_keys = ON')
     try:
         yield connection

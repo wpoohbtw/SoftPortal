@@ -273,6 +273,10 @@ function PortalView({
   onAdmin?: () => void
   onLogoutRequest: () => void
 }) {
+  const openProject = (project: Project) => {
+    window.location.href = project.path
+  }
+
   return (
     <section className="portal-layout" aria-label="Projects">
       <div className="top-actions motion-rise">
@@ -292,7 +296,7 @@ function PortalView({
       <div className="portal-center">
         <div className="project-grid">
           {projects.slice(0, 3).map((project) => (
-            <button className="project-button motion-rise" key={project.key} type="button">
+            <button className="project-button motion-rise" key={project.key} onClick={() => openProject(project)} type="button">
               <strong>{project.name}</strong>
               <span className="project-arrow">
                 <ArrowRight size={18} />

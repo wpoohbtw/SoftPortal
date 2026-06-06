@@ -24,6 +24,19 @@ Open:
 http://127.0.0.1:5173
 ```
 
+ProfitsNLosses is available through the portal after login:
+
+```text
+http://127.0.0.1:5173/pnl/
+```
+
+The launcher also prepares the local PnLs integration:
+
+- builds `../ProfitsNLosses/dist` with Vite base `/pnl/`;
+- starts the PnLs backend on `http://127.0.0.1:8001`;
+- starts the Portal backend on a free local port;
+- proxies `/pnl/`, `/pnl/api/v1/*`, and `/pnl/api/v1/market/ws` through Portal auth.
+
 If the default dev port is busy, the launcher tries `5174` and `5175` and prints
 the selected URL in the same console.
 
@@ -61,6 +74,6 @@ SoftPortal/
 
 - Registration is intentionally absent.
 - Unauthenticated API calls return `401`; the frontend returns to login when there is no session.
-- Project buttons are still placeholders; real project pages will be connected separately.
-- Future `ProfitsNLosses` integration is reserved for `/pnl/` and protected by the production nginx `auth_request` example.
+- The ProfitsNLosses project button opens `/pnl/`.
+- Local `/pnl/` integration is served by the Portal backend; production can use the nginx `auth_request` example.
 - Admin users can open `/admin` and manage portal users.
