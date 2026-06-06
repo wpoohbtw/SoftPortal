@@ -1,0 +1,16 @@
+import os
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+DATA_DIR = BASE_DIR / 'data'
+DB_PATH = DATA_DIR / 'portal.db'
+
+SESSION_COOKIE = 'portal_session'
+SESSION_TTL_DAYS = 7
+COOKIE_SECURE = os.getenv('PORTAL_COOKIE_SECURE', '0').lower() in {'1', 'true', 'yes'}
+COOKIE_SAMESITE = os.getenv('PORTAL_COOKIE_SAMESITE', 'lax')
+
+DEFAULT_ADMIN_USERNAME = 'admin'
+DEFAULT_ADMIN_DISPLAY_NAME = 'Admin'
+DEFAULT_ADMIN_PASSWORD = 'ChangeMe123!'

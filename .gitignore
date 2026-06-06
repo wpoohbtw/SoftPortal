@@ -1,0 +1,16 @@
+logs/
+vault/
+backend/.venv/
+backend/data/
+.env
+backend/.env
+frontend/.env
+__pycache__/
+*.pyc
+*.db
+*.sqlite
+*.sqlite3
+frontend/node_modules/
+frontend/dist/
+*.log
+*.local

@@ -1,0 +1,17 @@
+[Unit]
+Description=SoftPortal FastAPI backend
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/softportal/backend
+EnvironmentFile=/srv/softportal/backend/.env
+Environment=PORTAL_COOKIE_SECURE=1
+ExecStart=/srv/softportal/backend/.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+User=softportal
+Group=softportal
+
+[Install]
+WantedBy=multi-user.target
