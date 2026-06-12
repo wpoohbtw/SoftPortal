@@ -114,6 +114,7 @@ def seed_admin(connection: sqlite3.Connection) -> None:
 def seed_projects(connection: sqlite3.Connection) -> None:
     projects = [
         ('pnl', 'ProfitsNLosses', '/pnl/', 'Future protected route for finance tools'),
+        ('fnup', 'FoldersNUsersParser', '/fnup/', 'Telegram accounts and folder-channel parser'),
         ('vault', 'Vault Console', '/vault/', 'Admin-only workspace placeholder'),
         ('metrics', 'Metrics Lab', '/metrics/', 'Experiments and reports placeholder'),
     ]
@@ -133,6 +134,16 @@ def seed_projects(connection: sqlite3.Connection) -> None:
         WHERE users.username = ?
         """,
         (config.DEFAULT_ADMIN_USERNAME,),
+    )
+    connection.execute(
+        """
+        INSERT OR IGNORE INTO project_access (user_id, project_id, can_access)
+        SELECT users.id, projects.id, 1
+        FROM users
+        CROSS JOIN projects
+        WHERE users.is_active = 1
+          AND projects.key = 'fnup'
+        """
     )
 
 

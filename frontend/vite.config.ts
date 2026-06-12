@@ -18,6 +18,10 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/fnup': {
+        target: `http://127.0.0.1:${apiPort}`,
+        changeOrigin: true,
+      },
     },
   },
 })

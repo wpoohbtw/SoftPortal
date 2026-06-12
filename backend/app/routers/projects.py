@@ -20,7 +20,13 @@ def get_accessible_projects(
         WHERE project_access.user_id = ?
           AND project_access.can_access = 1
           AND projects.is_active = 1
-        ORDER BY projects.id
+        ORDER BY
+          CASE projects.key
+            WHEN 'pnl' THEN 1
+            WHEN 'fnup' THEN 2
+            ELSE 10
+          END,
+          projects.id
         """,
         (user_id,),
     ).fetchall()

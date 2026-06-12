@@ -8,7 +8,7 @@ Private project portal scaffold.
 - Backend: FastAPI, SQLite
 - Auth scaffold: users, sessions, project access
 - Admin scaffold: create and remove portal users
-- Deployment scaffold: static frontend, FastAPI API, protected future `/pnl/` reverse proxy route
+- Deployment scaffold: static frontend, FastAPI API, protected `/pnl/` and `/fnup/` reverse proxy routes
 
 ## Development
 
@@ -30,12 +30,20 @@ ProfitsNLosses is available through the portal after login:
 http://127.0.0.1:5173/pnl/
 ```
 
-The launcher also prepares the local PnLs integration:
+FoldersNUsersParser is available through the portal after login when its backend and dist are prepared:
+
+```text
+http://127.0.0.1:5173/fnup/
+```
+
+The launcher also prepares local project integrations:
 
 - builds `../ProfitsNLosses/dist` with Vite base `/pnl/`;
 - starts the PnLs backend on `http://127.0.0.1:8001`;
+- builds `../FoldersNUsersParser/dist` with Vite base `/fnup/`;
+- starts the FNUP backend on `http://127.0.0.1:8002`;
 - starts the Portal backend on a free local port;
-- proxies `/pnl/`, `/pnl/api/v1/*`, and `/pnl/api/v1/market/ws` through Portal auth.
+- proxies `/pnl/`, `/pnl/api/v1/*`, `/pnl/api/v1/market/ws`, `/fnup/`, `/fnup/api/v1/*`, and `/fnup/media/*` through Portal auth.
 
 If the default dev port is busy, the launcher tries `5174` and `5175` and prints
 the selected URL in the same console.
@@ -75,5 +83,6 @@ SoftPortal/
 - Registration is intentionally absent.
 - Unauthenticated API calls return `401`; the frontend returns to login when there is no session.
 - The ProfitsNLosses project button opens `/pnl/`.
-- Local `/pnl/` integration is served by the Portal backend; production can use the nginx `auth_request` example.
+- The FoldersNUsersParser project button opens `/fnup/`.
+- Local project integrations are served by the Portal backend; production can use the nginx `auth_request` example.
 - Admin users can open `/admin` and manage portal users.

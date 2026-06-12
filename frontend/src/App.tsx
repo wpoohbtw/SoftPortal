@@ -52,17 +52,10 @@ const fallbackProjects: Project[] = [
     is_active: true,
   },
   {
-    key: 'vault',
-    name: 'Заглушка 01',
-    path: '/vault/',
-    description: 'Пустой слот под будущий проект.',
-    is_active: true,
-  },
-  {
-    key: 'metrics',
-    name: 'Заглушка 02',
-    path: '/metrics/',
-    description: 'Пустой слот под будущий проект.',
+    key: 'fnup',
+    name: 'FoldersNUsersParser',
+    path: '/fnup/',
+    description: 'Парсер Telegram-аккаунтов, папок, каналов и таблиц проверки.',
     is_active: true,
   },
 ]
@@ -101,6 +94,13 @@ function getProjectCard(project: Project, index: number): Pick<Project, 'name' |
     return {
       name: 'ProfitsNLosses',
       description: 'Журнал крипто-сделок без реальных денег: позиции, PnL и заметки по ситуациям.',
+    }
+  }
+
+  if (project.key === 'fnup') {
+    return {
+      name: 'FoldersNUsersParser',
+      description: 'Парсер Telegram-аккаунтов, папок, каналов и таблиц проверки.',
     }
   }
 
@@ -289,9 +289,10 @@ function PortalView({
   onLogoutRequest: () => void
 }) {
   const openProject = (project: Project) => {
-    if (project.key !== 'pnl') return
+    if (!['pnl', 'fnup'].includes(project.key)) return
     window.location.href = project.path
   }
+  const visibleProjects = projects.filter((project) => ['pnl', 'fnup'].includes(project.key))
 
   return (
     <section className="portal-layout" aria-label="Projects">
@@ -312,12 +313,12 @@ function PortalView({
       <div className="portal-center">
         <TargetCursor spinDuration={5} hideDefaultCursor parallaxOn hoverDuration={0.65} />
         <div className="project-grid">
-          {projects.slice(0, 3).map((project, index) => {
+          {visibleProjects.map((project, index) => {
             const card = getProjectCard(project, index + 1)
             return (
               <button
                 className={
-                  project.key === 'pnl'
+                  ['pnl', 'fnup'].includes(project.key)
                     ? 'project-button cursor-target motion-rise'
                     : 'project-button cursor-target is-placeholder motion-rise'
                 }

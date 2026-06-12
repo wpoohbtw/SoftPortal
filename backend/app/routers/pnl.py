@@ -118,14 +118,20 @@ async def pnl_api_proxy(
     }
     headers.update(build_portal_headers(current_user))
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        proxied = await client.request(
-            request.method,
-            target_url,
-            params=request.query_params,
-            content=body,
-            headers=headers,
-        )
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            proxied = await client.request(
+                request.method,
+                target_url,
+                params=request.query_params,
+                content=body,
+                headers=headers,
+            )
+    except httpx.RequestError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='PnLs backend is unavailable',
+        ) from exc
 
     return Response(
         content=proxied.content,

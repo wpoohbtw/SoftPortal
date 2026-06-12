@@ -104,18 +104,24 @@ def proxy_check(
     connection: sqlite3.Connection = Depends(get_db),
 ):
     original_uri = request.headers.get('x-original-uri') or request.headers.get('x-forwarded-uri') or ''
+    project_key = ''
     if original_uri.startswith('/pnl/'):
+        project_key = 'pnl'
+    elif original_uri.startswith('/fnup/'):
+        project_key = 'fnup'
+
+    if project_key:
         access = connection.execute(
             """
             SELECT 1
             FROM projects
             JOIN project_access ON project_access.project_id = projects.id
-            WHERE projects.key = 'pnl'
+            WHERE projects.key = ?
               AND projects.is_active = 1
               AND project_access.user_id = ?
               AND project_access.can_access = 1
             """,
-            (current_user['id'],),
+            (project_key, current_user['id']),
         ).fetchone()
         if not access:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Project access denied')

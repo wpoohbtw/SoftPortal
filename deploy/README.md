@@ -10,6 +10,9 @@ Example layout for deploying SoftPortal together with ProfitsNLosses:
 /srv/ProfitsNLosses/
   backend/
   dist/
+/srv/FoldersNUsersParser/
+  backend/
+  dist/
 ```
 
 ## SoftPortal backend
@@ -72,3 +75,20 @@ Nginx sends `/pnl/` to the SoftPortal backend, not directly to ProfitsNLosses. S
 - passes `X-Portal-User-Id` and `X-Portal-Username`.
 
 ProfitsNLosses backend should listen privately on `127.0.0.1:8001`.
+
+## FoldersNUsersParser integration
+
+`/fnup/` is protected by the same Portal auth flow. SoftPortal:
+
+- checks the Portal session;
+- serves the FNUP frontend from `PORTAL_FNUP_DIST_PATH`;
+- proxies `/fnup/api/v1/*` to `PORTAL_FNUP_API_URL`;
+- proxies `/fnup/media/*` to `PORTAL_FNUP_API_URL`;
+- passes `X-Portal-User-Id` and `X-Portal-Username`.
+
+FNUP backend should listen privately on `127.0.0.1:8002`.
+Build FNUP frontend with:
+
+```bash
+VITE_BASE_PATH=/fnup/ VITE_API_BASE_URL=/fnup npm run build
+```
